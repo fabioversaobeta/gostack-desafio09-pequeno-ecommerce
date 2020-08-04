@@ -37,11 +37,11 @@ class CreateOrderService {
       throw new AppError('Customer not exist');
     }
 
-    const idsProduct = products.map(p => {
-      return { id: p.id };
-    });
+    const productsList = await this.productsRepository.findAllById(products);
 
-    const productsList = await this.productsRepository.findAllById(idsProduct);
+    if (productsList.length === 0) {
+      throw new AppError('Products not found');
+    }
 
     const productsDone = productsList.map(product => {
       const { quantity } = products.filter(p => p.id === product.id)[0];
@@ -65,6 +65,17 @@ class CreateOrderService {
       customer,
       products: productsDone,
     });
+
+    const productsSubtracted = productsList.map(product => {
+      const { quantity } = products.filter(p => p.id === product.id)[0];
+
+      return {
+        id: product.id,
+        quantity: product.quantity - quantity,
+      };
+    });
+
+    await this.productsRepository.updateQuantity(productsSubtracted);
 
     return order;
   }
