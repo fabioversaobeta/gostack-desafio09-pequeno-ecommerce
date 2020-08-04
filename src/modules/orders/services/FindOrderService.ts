@@ -12,7 +12,7 @@ interface IRequest {
 @injectable()
 class FindOrderService {
   constructor(
-    @inject('OrderRepository')
+    @inject('OrdersRepository')
     private ordersRepository: IOrdersRepository,
 
     @inject('ProductsRepository')
@@ -23,7 +23,7 @@ class FindOrderService {
   ) {}
 
   public async execute({ id }: IRequest): Promise<Order | undefined> {
-    const order = this.ordersRepository.findById(id);
+    const order = await this.ordersRepository.findById(id);
 
     return order;
   }
