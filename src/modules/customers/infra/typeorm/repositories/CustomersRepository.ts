@@ -14,8 +14,6 @@ class CustomersRepository implements ICustomersRepository {
   public async all(): Promise<Customer[]> {
     const customers = await this.ormRepository.find();
 
-    console.log('customers', customers);
-
     return customers;
   }
 
